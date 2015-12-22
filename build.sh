@@ -25,5 +25,4 @@ expect {
          "omd: no such site: ${BUILD_SITE} { exp_continue }
 	 eof
 }
-expect eof
 EOD
