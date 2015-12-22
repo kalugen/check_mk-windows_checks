@@ -1,7 +1,7 @@
 #!/bin/bash
 
-. ./lib/util.sh
-. ./lib/pkg_environment.sh
+. ${SOURCEDIR}/scripts/lib/util.sh
+. ${SOURCEDIR}/scripts/lib/pkg_environment.sh
 
 mkdir -p ${SOURCEDIR}/archive/
 

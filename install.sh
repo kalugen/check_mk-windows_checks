@@ -1,18 +1,23 @@
 #!/bin/bash
 
-. ./lib/pkg_environment.sh
+export SOURCEDIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )
+. ${SOURCEDIR}/scripts/lib/pkg_environment.sh
 
 SITE_BLACKLIST="pippo"
 
-PACKAGE="${SOURCEDIR}/archive/${NAME}-${VERSION}.mkp"
+PACKAGE="${NAME}-${VERSION}.mkp"
+
+cp ${SOURCEDIR}/archive/${PACKAGE} /tmp
 
 /usr/bin/omd  sites | grep -v SITE | awk '{print $1}' | grep -vE "${SITE_BLACKLIST}" | while read SITE; do
 
     # Install the appropriate files in the correct positions inside the site
-    su - ${SITE} -c "cmk -P install ${PACKAGE}"
+    su - ${SITE} -c "cmk -P install /tmp/${PACKAGE}"
+
+    . ${SOURCEDIR}/scripts/lib/util.sh ${SITE}
 
     # Fix the permissions, since we are running as root
-    chown ${USER}:${GROUP} -R ${LOCALSHARE}
+    chown ${SITEUSER}:${SITEGROUP} -R ${LOCALSHARE}
 
     # Stop apache and mod_python
     omd stop ${SITE} apache

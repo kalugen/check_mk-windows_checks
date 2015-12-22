@@ -1,30 +1,32 @@
 #!/bin/bash
 
-. ./lib/util.sh
+. ${SOURCEDIR}/scripts/lib/util.sh
 
 # Start
 echo "${NAME} ${VERSION} installation script"
 
-if [[ ${DRYRUN} -gt 0 ]]; then
+DRYRUN=0
+
+if [ ${DRYRUN} -eq 0 ]; then
     # If we're not in dry-run mode, copy the files to their destinations
-    cp -v ${SOURCEDIR}/checks/*                 ${CHECKDIR}/
-    cp -v ${SOURCEDIR}/docs/*                   ${DOCDIR}/
+    cp -v ${SOURCEDIR}/checks/*                 ${CHECKDIR}/                  
+    cp -v ${SOURCEDIR}/docs/*                   ${MANDIR}/
     cp -v ${SOURCEDIR}/templates/*              ${TEMPLDIR}/
     cp -v ${SOURCEDIR}/web/plugins/perfometer/* ${WEBPLUGINSDIR}/perfometer
     cp -v ${SOURCEDIR}/web/plugins/wato/*       ${WEBPLUGINSDIR}/wato
-    cp -v ${SOURCEDIR}/agent/plugins/*          ${AGENTSDIR}/
-    cp -v ${SOURCEDIR}/agent/*                  ${AGENTSDIR}/plugins
+    cp -v ${SOURCEDIR}/agents/plugins/*          ${AGENTSDIR}/plugins
+    cp -v ${SOURCEDIR}/agents/*                  ${AGENTSDIR}/
 
     # Deploy the package info, making cmk package management aware of our modifications
     # NOTE: this depends on the exported variables above
-    if [ ! -f ${SOURCEDIR}/.cmkpackage.json ]; do
+    if [ ! -f ${SOURCEDIR}/.cmkpackage.json ]; then
         ${SOURCEDIR}/scripts/create_package_descriptor.sh
     fi
-    cp ${SOURCEDIRE}/.cmkpackage.json > ${OMDBASE}/${SITE}/var/check_mk/packages/${NAME}
+    cp ${SOURCEDIR}/.cmkpackage.json ${OMDBASE}/${SITE}/var/check_mk/packages/${NAME}
 
 else
     # If we are in dry-run mode, just display the package descriptor without writing anythng anywhere
-    cat ${SOURCEDIRE}/cmk_package.json
+    cat ${SOURCEDIR}/.cmkpackage.json
 fi
 
 

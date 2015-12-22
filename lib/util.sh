@@ -1,32 +1,32 @@
 #!/bin/bash
 
 # Setup the work parameters
-OMDBASE="/omd/sites"
+export OMDBASE="/omd/sites"
 
 # Checks if the site name was passed
 if [[ ${1} == "" ]]; then
   echo "Indicare il site!"
   exit 255
 else
-  SITE=${1}
+  export SITE=${1}
 fi
 
 # Dry-run option
 if [[ ${2} == "-n" ]]; then
-  DRYRUN=1
+  export DRYRUN=1
 else
-  DRYRUN=0
+  export DRYRUN=0
 fi
 
 # Assume that $SITE is also the user and group name
 # as is the standard for OMD.
 # TODO: figure out how to actually determine these values from OMD config
-USER=${SITE}
-GROUP=${SITE}
+export SITEUSER=${SITE}
+export SITEGROUP=${SITE}
 
-LOCALSHARE="${OMDBASE}/${SITE}/local/share"
-CHECKDIR="${LOCALSHARE}/check_mk/checks"
-DOCDIR="${LOCALSHARE}/doc/check_mk"
-TEMPLDIR="${LOCALSHARE}/check_mk/pnp-templates"
-WEBPLUGINSDIR="${LOCALSHARE}/check_mk/web/plugins"
-AGENTSDIR="${LOCALSHARE}/check_mk/agents"
+export LOCALSHARE="${OMDBASE}/${SITE}/local/share"
+export CHECKDIR="${LOCALSHARE}/check_mk/checks"
+export MANDIR="${LOCALSHARE}/check_mk/checkman"
+export TEMPLDIR="${LOCALSHARE}/check_mk/pnp-templates"
+export WEBPLUGINSDIR="${LOCALSHARE}/check_mk/web/plugins"
+export AGENTSDIR="${LOCALSHARE}/check_mk/agents"

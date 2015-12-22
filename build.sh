@@ -7,15 +7,16 @@
 
 # Lo script produce un pacchetto MKP reperibile sotto la working directory nella cartella "archive/"
 
-. ./lib/pkg_environment.sh
+export SOURCEDIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )
+. ${SOURCEDIR}/scripts/lib/pkg_environment.sh
 
 RAW_SUM=$(echo "${NAME}_$(date +%s%6N)" | sha1sum)
 BUILD_SITE="BUILD_${RAW_SUM:0:7}"
 
 /usr/bin/omd create ${BUILD_SITE}
 
-${SOURCEDIRE}/scripts/installsite.sh ${BUILD_SITE}
-${SOURCEDIRE}/scripts/package.sh ${BUILD_SITE}
+${SOURCEDIR}/scripts/installsite.sh ${BUILD_SITE}
+${SOURCEDIR}/scripts/package.sh ${BUILD_SITE}
 
 /usr/bin/expect <<EOD
 spawn /usr/bin/omd rm --kill ${BUILD_SITE}
