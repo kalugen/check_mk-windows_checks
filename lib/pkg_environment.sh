@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Project Name
+export NAME=$( echo $(basename ${SOURCEDIR}) | sed 's/check_mk-//g' )
+
 # Gets the version from Git tags or just uses date-time
 if [[ $(git status 2>/dev/null) ]]; then
   VERSION=$(git describe --tags)
@@ -8,13 +11,20 @@ else
 fi
 export VERSION
 
+# Gets the package title from the title inside the check man page, if present
+if [ -f ${SOURCEDIR}/docs/${NAME} ]; then
+  TITLE=$(grep title ${SOURCEDIR}/docs/${NAME}  | awk -F': ' '{print $NF}')
+else # or uses the project's NAME
+  TITLE=${NAME}
+fi
+
+export TITLE
 # Package Descriptor Variables
 export AUTHOR="MIS Monitoring Desk"
 export CMK_MIN_VERSION="1.2.6p1"
+# TODO: dinamically use CMK Version used in the build site
 export CMK_PKG_VERSION="1.2.6p12"
 export DESCRIPTION="Package Descr"
-export NAME=$( echo $(basename ${SOURCEDIR}) | sed 's/check_mk-//g' )
-export TITLE="TCP Queue Monitor"
 export URL="http://mxplgitas01.mbdom.mbgroup.ad/Monitoring/check_mk-${NAME}"
 
 # Now populate files arrays: this is needed for custom package descriptors
