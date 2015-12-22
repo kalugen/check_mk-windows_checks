@@ -31,3 +31,5 @@ cp ${SOURCEDIR}/archive/${PACKAGE} /tmp
     omd start ${SITE} apache
 
 done
+
+rm /tmp/${PACKAGE}
