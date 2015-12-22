@@ -23,6 +23,7 @@ spawn /usr/bin/omd rm --kill ${BUILD_SITE}
 expect {
          "(yes/NO): "                      { send "yes\n"; exp_continue }
          "omd: no such site: ${BUILD_SITE} { exp_continue }
+	 eof
 }
 expect eof
 EOD
