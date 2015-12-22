@@ -11,14 +11,17 @@ else
 fi
 export VERSION
 
-# Gets the package title from the title inside the check man page, if present
-if [ -f ${SOURCEDIR}/docs/${NAME} ]; then
-  TITLE=$(grep title ${SOURCEDIR}/docs/${NAME}  | awk -F': ' '{print $NF}')
+# Gets the package title and description from the title inside the check man page, if present
+MANFILE=${SOURCEDIR}/docs/${NAME}
+if [ -f ${MANFILE} ]; then
+  TITLE="$(grep title ${MANFILE}  | awk -F': ' '{print $NF}')"
+  DESCRIPTION="$(cat ${MANFILE} | perl -e 'while (<>) { print if /^description:\s+$/i .. /^item:\s+$/ }' | grep -v ':')"
 else # or uses the project's NAME
   TITLE=${NAME}
+  DESCRIPTION=${NAME}
 fi
+export TITLE DESCRIPTION
 
-export TITLE
 # Package Descriptor Variables
 export AUTHOR="MIS Monitoring Desk"
 export CMK_MIN_VERSION="1.2.6p1"
