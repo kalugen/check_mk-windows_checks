@@ -15,6 +15,8 @@ BUILD_SITE="BUILD_${RAW_SUM:0:7}"
 
 /usr/bin/omd create ${BUILD_SITE}
 
+find ${SOURCEDIR} -name .placeholder | xargs rm -f
+
 ${SOURCEDIR}/scripts/installsite.sh ${BUILD_SITE}
 ${SOURCEDIR}/scripts/package.sh ${BUILD_SITE}
 
