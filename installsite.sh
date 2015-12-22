@@ -19,9 +19,7 @@ if [ ${DRYRUN} -eq 0 ]; then
 
     # Deploy the package info, making cmk package management aware of our modifications
     # NOTE: this depends on the exported variables above
-    if [ ! -f ${SOURCEDIR}/.cmkpackage.json ]; then
-        ${SOURCEDIR}/scripts/create_package_descriptor.sh
-    fi
+    ${SOURCEDIR}/scripts/create_package_descriptor.sh
     cp ${SOURCEDIR}/.cmkpackage.json ${OMDBASE}/${SITE}/var/check_mk/packages/${NAME}
 
 else
