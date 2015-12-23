@@ -7,15 +7,26 @@ echo "${NAME} ${VERSION} installation script"
 
 DRYRUN=0
 
+# If we're not in dry-run mode, copy the files to their destinations
 if [ ${DRYRUN} -eq 0 ]; then
-    # If we're not in dry-run mode, copy the files to their destinations
+
+    # The checks
     cp -v ${SOURCEDIR}/checks/*                 ${CHECKDIR}/                  
+
+    # The checks manpages
     cp -v ${SOURCEDIR}/docs/*                   ${MANDIR}/
+
+    # PNP4Nagios templates
     cp -v ${SOURCEDIR}/templates/*              ${TEMPLDIR}/
-    cp -v ${SOURCEDIR}/web/plugins/perfometer/* ${WEBPLUGINSDIR}/perfometer
-    cp -v ${SOURCEDIR}/web/plugins/wato/*       ${WEBPLUGINSDIR}/wato
-    cp -v ${SOURCEDIR}/agents/plugins/*          ${AGENTSDIR}/plugins
-    cp -v ${SOURCEDIR}/agents/*                  ${AGENTSDIR}/
+
+    # WATO plugins
+    for PLUGINTYPE in ${SOURCEDIR}/web/plugins/*; do
+      cp -v ${PLUGINTYPE}/* ${WEBPLUGINSDIR}/$(basename ${PLUGINTYPE})
+    done
+
+    # Agent files
+    cp -v ${SOURCEDIR}/agents/plugins/*         ${AGENTSDIR}/plugins
+    cp -v ${SOURCEDIR}/agents/*                 ${AGENTSDIR}/
 
     # Deploy the package info, making cmk package management aware of our modifications
     # NOTE: this depends on the exported variables above
