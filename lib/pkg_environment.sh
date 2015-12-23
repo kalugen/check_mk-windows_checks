@@ -25,8 +25,10 @@ export TITLE DESCRIPTION
 # Package Descriptor Variables
 export AUTHOR="MIS Monitoring Desk"
 export CMK_MIN_VERSION="1.2.6p1"
-# TODO: dinamically use CMK Version used in the build site
+
+# Determine which version of CMK is available
 export CMK_PKG_VERSION="1.2.6p12"
+
 export DESCRIPTION="Package Descr"
 export URL="http://mxplgitas01.mbdom.mbgroup.ad/Monitoring/check_mk-${NAME}"
 
