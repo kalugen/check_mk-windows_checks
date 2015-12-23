@@ -1,7 +1,11 @@
 #!/bin/bash
 
-# Project Name
-export NAME=$( echo $(basename ${SOURCEDIR}) | sed 's/check_mk-//g' )
+# Project Name - handles Jenkins workspace paths
+if [ $(basename $SOURCEDIR) == "workspace" ]; then
+  export NAME=$(basename $(dirname ${SOURCEDIR}) |  sed 's/check_mk-//g')
+else
+  export NAME=$( echo $(basename ${SOURCEDIR}) | sed 's/check_mk-//g' )
+fi
 
 # Gets the version from Git tags or just uses date-time
 if [[ $(git status 2>/dev/null) ]]; then
