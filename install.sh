@@ -1,18 +1,15 @@
 #!/bin/bash
 
 export SOURCEDIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )
-. ${SOURCEDIR}/scripts/lib/pkg_environment.sh
 
 SITE_BLACKLIST="pippo"
 
-PACKAGE="${NAME}-${VERSION}.mkp"
-
-cp ${SOURCEDIR}/archive/${PACKAGE} /tmp
+PACKAGE=$(ls -1rt ${SOURCEDIR}/package/*.mkp | tail -n1)
 
 /usr/bin/omd  sites | grep -v SITE | awk '{print $1}' | grep -vE "${SITE_BLACKLIST}" | while read SITE; do
 
     # Install the appropriate files in the correct positions inside the site
-    su - ${SITE} -c "cmk -P install /tmp/${PACKAGE}"
+    su - ${SITE} -c "cmk -P install ${PACKAGE}"
 
     . ${SOURCEDIR}/scripts/lib/util.sh ${SITE}
 
@@ -32,4 +29,4 @@ cp ${SOURCEDIR}/archive/${PACKAGE} /tmp
 
 done
 
-rm /tmp/${PACKAGE}
+rm -fR ${SOURCEDIR}
