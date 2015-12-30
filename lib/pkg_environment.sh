@@ -9,9 +9,9 @@ fi
 
 # Gets the version from Git tags or just uses date-time
 if [[ $(git status 2>/dev/null) ]]; then
-  VERSION=$(git describe --tags)
+  VERSION=$(git describe --tags | sed 's/-/./g')
 else
-  VERSION=$(date +'%Y%m%d-%H%M%S')
+  VERSION="v99.$(date +'%Y%m%d.%H%M%S')"
 fi
 export VERSION
 
