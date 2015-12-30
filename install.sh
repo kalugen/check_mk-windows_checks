@@ -28,5 +28,3 @@ PACKAGE=$(ls -1 ${SOURCEDIR}/packages/*.mkp | tail -n1)
     omd start ${SITE} apache
 
 done
-
-rm -fR ${SOURCEDIR}
