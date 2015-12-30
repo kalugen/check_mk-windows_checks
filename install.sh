@@ -4,7 +4,7 @@ export SOURCEDIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )
 
 SITE_BLACKLIST="pippo"
 
-PACKAGE=$(ls -1 ${SOURCEDIR}/package/*.mkp | tail -n1)
+PACKAGE=$(ls -1 ${SOURCEDIR}/packages/*.mkp | tail -n1)
 
 /usr/bin/omd  sites | grep -v SITE | awk '{print $1}' | grep -vE "${SITE_BLACKLIST}" | while read SITE; do
 
