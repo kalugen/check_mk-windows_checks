@@ -32,7 +32,7 @@ if [ ${DRYRUN} -eq 0 ]; then
     # NOTE: this depends on the exported variables above
 
     # Determine the running version of CheckMK
-    export CMK_PKG_VERSION=$(cmk --version | grep "check_mk version" | awk '{print $NF}')
+    export CMK_PKG_VERSION=$(su - ${SITE} -c "cmk --version" | grep "check_mk version" | awk '{print $NF}')
 
     ${SOURCEDIR}/scripts/create_package_descriptor.sh
     cp ${SOURCEDIR}/.cmkpackage.json ${OMDBASE}/${SITE}/var/check_mk/packages/${NAME}
