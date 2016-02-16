@@ -54,6 +54,8 @@ export PNP_TEMPLATES=$(find . -type f|xargs|sed 's/ /,/g;s/\.\///g')
 popd > /dev/null
 
 pushd ${SOURCEDIR}/web > /dev/null
-export WEB=$(find . -type f|xargs|sed 's/ /,/g;s/\.\///g')
+WEB=$(find . -type f| grep -E  'config|dashboard|icons|pages|perfometer|sidebar|views|visuals|wato' | xargs | sed 's/ /,/g;s/\.\///g')
+WEB=$(find . -type d| grep -vE 'config|dashboard|icons|pages|perfometer|sidebar|views|visuals|wato|plugins$|\.$' | xargs |  sed 's/ /,/g;s/\.\///g')
+export WEB
 popd > /dev/null
 
