@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Esclude eventuali placeholders rimasti in giro
+FIND_HERE="find . ! -name .placeholder"
+
 # Project Name - handles Jenkins workspace paths
 if [ $(basename $SOURCEDIR) == "workspace" ]; then
   export NAME=$(basename $(dirname ${SOURCEDIR}) |  sed 's/check_mk-//g')
@@ -38,24 +41,24 @@ export URL="http://mxplgitas01.mbdom.mbgroup.ad/Monitoring/check_mk-${NAME}"
 
 # Now populate files arrays: this is needed for custom package descriptors
 pushd ${SOURCEDIR}/agents > /dev/null
-export AGENTS=$(find . -type f|xargs|sed 's/ /,/g; s/\.\///g')
+export AGENTS=$(${FIND_HERE} -type f|xargs|sed 's/ /,/g; s/\.\///g')
 popd > /dev/null
 
 pushd ${SOURCEDIR}/docs > /dev/null
-export CHECKMAN=$(find . -type f|xargs|sed 's/ /,/g;s/\.\///g')
+export CHECKMAN=$(${FIND_HERE} -type f|xargs|sed 's/ /,/g;s/\.\///g')
 popd > /dev/null
 
 pushd ${SOURCEDIR}/checks > /dev/null
-export CHECKS=$(find . -type f|xargs|sed 's/ /,/g;s/\.\///g')
+export CHECKS=$(${FIND_HERE} -type f|xargs|sed 's/ /,/g;s/\.\///g')
 popd > /dev/null
 
 pushd ${SOURCEDIR}/templates > /dev/null
-export PNP_TEMPLATES=$(find . -type f|xargs|sed 's/ /,/g;s/\.\///g')
+export PNP_TEMPLATES=$(${FIND_HERE} -type f|xargs|sed 's/ /,/g;s/\.\///g')
 popd > /dev/null
 
 pushd ${SOURCEDIR}/web > /dev/null
-WEB=$(find . -type f| grep -E  'config|dashboard|icons|pages|perfometer|sidebar|views|visuals|wato' | xargs | sed 's/ /,/g;s/\.\///g')
-WEB=$(find . -type d| grep -vE 'config|dashboard|icons|pages|perfometer|sidebar|views|visuals|wato|plugins$|\.$' | xargs |  sed 's/ /,/g;s/\.\///g')
+WEB=$(${FIND_HERE} -type f| grep -E  'config|dashboard|icons|pages|perfometer|sidebar|views|visuals|wato' | xargs | sed 's/ /,/g;s/\.\///g')
+WEB=$(${FIND_HERE} -type d| grep -vE 'config|dashboard|icons|pages|perfometer|sidebar|views|visuals|wato|plugins$|\.$' | xargs |  sed 's/ /,/g;s/\.\///g')
 export WEB
 popd > /dev/null
 
