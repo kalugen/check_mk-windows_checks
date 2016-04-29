@@ -57,10 +57,9 @@ export PNP_TEMPLATES=$(${FIND_HERE} -type f|xargs|sed 's/ /,/g;s/\.\///g')
 popd > /dev/null
 
 pushd ${SOURCEDIR}/web > /dev/null
-WEB=$( cat \
-   <(${FIND_HERE} -type f| grep -E  'config|dashboard|icons|pages|perfometer|sidebar|views|visuals|wato') \
-   <(${FIND_HERE} -type d| grep -vE 'config|dashboard|icons|pages|perfometer|sidebar|views|visuals|wato|plugins$|\.$') | \
-   xargs | sed 's/ /,/g;s/\.\///g')
+FIND_STD_DIRS="${FIND_HERE} -type f| grep -E 'config|dashboard|icons|pages|perfometer|sidebar|views|visuals|wato'"
+FIND_NON_STD_DIRS="${FIND_HERE} -type d| grep -vE 'config|dashboard|icons|pages|perfometer|sidebar|views|visuals|wato|plugins$|\.$'"
+WEB=$( cat <(eval ${FIND_STD_DIRS}) <(eval ${FIND_NON_STD_DIRS}) | xargs | sed 's/ /,/g;s/\.\///g')
 export WEB
 popd > /dev/null
 
