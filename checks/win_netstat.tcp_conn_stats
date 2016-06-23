@@ -1,6 +1,15 @@
 #!/usr/bin/python
 # -*- encoding: utf-8; py-indent-offset: 4 -*-
 
+# Workaround for CMK 1.2.7+
+import inspect,sys
+
+if "inventory_tcp_conn_stats" not in [name for name,obj in inspect.getmembers(sys.modules[__name__])]:
+  def inventory_tcp_conn_stats():
+    pass
+
+
+
 win_nestat_tcp_conn_states_defaults = {
     "ESTABLISHED" : { 'warn': { 'min': 100, 'max': 99999999 }, 'crit': { 'min': 0, 'max': 99999999 }},
     "SYN_SENT"    : { 'warn': { 'min': 0, 'max': 99999999 }, 'crit': { 'min': 0, 'max': 99999999 }},
