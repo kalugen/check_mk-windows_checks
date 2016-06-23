@@ -1,0 +1,17 @@
+title: Lenght and State of print queues on a Windows Server
+agents: windows
+catalog: os/kernel
+license: GPL
+distribution: MIS Monitoring Desk
+description:
+ This check uses WMI to determine number, state and queue lenght of all print
+ queues on a Windows Server.
+
+item:
+ a queue/printer
+
+perfdata:
+ lenght of the print queues
+
+inventory:
+ This check supports inventory.

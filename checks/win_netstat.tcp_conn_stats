@@ -1,0 +1,75 @@
+#!/usr/bin/python
+# -*- encoding: utf-8; py-indent-offset: 4 -*-
+
+win_nestat_tcp_conn_states_defaults = {
+    "ESTABLISHED" : { 'warn': { 'min': 100, 'max': 99999999 }, 'crit': { 'min': 0, 'max': 99999999 }},
+    "SYN_SENT"    : { 'warn': { 'min': 0, 'max': 99999999 }, 'crit': { 'min': 0, 'max': 99999999 }},
+    "SYN_RECV"    : { 'warn': { 'min': 0, 'max': 99999999 }, 'crit': { 'min': 0, 'max': 99999999 }},
+    "LAST_ACK"    : { 'warn': { 'min': 0, 'max': 99999999 }, 'crit': { 'min': 0, 'max': 99999999 }},
+    "CLOSE_WAIT"  : { 'warn': { 'min': 0, 'max': 99999999 }, 'crit': { 'min': 0, 'max': 99999999 }},
+    "TIME_WAIT"   : { 'warn': { 'min': 0, 'max': 99999999 }, 'crit': { 'min': 0, 'max': 99999999 }},
+    "CLOSED"      : { 'warn': { 'min': 0, 'max': 99999999 }, 'crit': { 'min': 0, 'max': 99999999 }},
+    "CLOSING"     : { 'warn': { 'min': 0, 'max': 99999999 }, 'crit': { 'min': 0, 'max': 99999999 }},
+    "FIN_WAIT1"   : { 'warn': { 'min': 0, 'max': 99999999 }, 'crit': { 'min': 0, 'max': 99999999 }},
+    "FIN_WAIT2"   : { 'warn': { 'min': 0, 'max': 99999999 }, 'crit': { 'min': 0, 'max': 99999999 }},
+    "BOUND"       : { 'warn': { 'min': 0, 'max': 99999999 }, 'crit': { 'min': 0, 'max': 99999999 }},
+}
+
+def win_netstat_tcp_conn_states_check(item,params,info):
+
+    # Initialize connection counters at 0
+    win_tcp_conn_states= {"ESTABLISHED" :  0,
+                          "SYN_SENT"    :  0,
+                          "SYN_RECV"    :  0,
+                          "LAST_ACK"    :  0,
+                          "CLOSE_WAIT"  :  0,
+                          "TIME_WAIT"   :  0,
+                          "CLOSED"      :  0,
+                          "CLOSING"     :  0,
+                          "FIN_WAIT1"   :  0,
+                          "FIN_WAIT2"   :  0,
+                          "BOUND"       :  0}
+
+    # Count the number of connections for each state
+    for line in info:
+        if(len(line) < 4):
+            continue
+        if not(line[3] in win_tcp_conn_states):
+            continue
+
+        win_tcp_conn_states[line[3]] += 1
+
+    # Process those numbers
+    rc = 0
+    perfdata = []
+    output   = "TCP connections - "
+
+    for state in win_tcp_conn_states:
+        state_count = win_tcp_conn_states[state]
+        state_perf = (state,state_count,None ,None ,None ,None)
+
+        if state in params:
+          threshold = params[state]
+
+          print threshold
+
+          if state_count < threshold['warn']['min'] or state_count > threshold['warn']['max']:
+            rc = 1
+          elif state_count < threshold['crit']['min'] or state_count > threshold['crit']['max']:
+            rc = 2
+
+        perfdata.append(state_perf)
+        output += "%s: %d " % (state,state_count)
+
+    return (rc, output, perfdata)
+
+check_info["win_netstat.tcp_conn_stats"] = {
+    'check_function':          win_netstat_tcp_conn_states_check,
+    'inventory_function':      inventory_tcp_conn_stats,
+    'service_description':     'Windows TCP Connections',
+    'default_levels_variable': 'win_nestat_tcp_conn_states_defaults',
+    'has_perfdata':            True,
+    'group':                   'tcp_conn_stats',
+    'includes':                ['tcp_conn_stats']
+}
+

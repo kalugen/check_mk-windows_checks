@@ -1,0 +1,103 @@
+#!/usr/bin/python
+# -*- encoding: utf-8; py-indent-offset: 2 -*-
+
+factory_settings['windows_print_queues_defaults'] = {
+  "job_levels": (2000,3000),
+  "page_levels" : (10000,20000)
+}
+
+windows_print_disabled_queues= []
+
+# L'item è la stampante
+def inventory_windows_print_queues(info):
+  inventory = []
+  disabled_queues = []
+
+  for rule in windows_print_disabled_queues:
+    taglist, hostlist = rule[1:3]
+
+    # g_hostname è una variabile globale (aargh) che ospita il nome dell'host
+    # su cui sta girando l'inventory.
+    if not hosttags_match_taglist(tags_of_host(g_hostname), taglist) \
+      or not in_extraconf_hostlist(hostlist, g_hostname):
+        continue
+
+    disabled_queues = rule[0]
+
+  for line in info:
+    if line[0] == "QUEUE":
+      disabled = False
+      for disabled_queue_re in disabled_queues:
+        if re.match(disabled_queue_re,line[1]):
+          disabled = True
+
+      if not disabled:
+        inventory.append((line[1],{}))
+
+  return inventory
+
+# Struttura line di info,
+# due tipi di record:
+
+# - Tag JOB
+# - Nome coda di stampa (stampante)
+# - Stato Job
+# - Owner del Job (utente)
+# - Numero pagine Job
+
+# - Tag QUEUE
+# - Nome coda di stampa (stampante)
+# - Stato della coda di stampa
+
+def check_windows_print_queues(item,params,info):
+  totalJobs  = 0
+  totalPages = 0
+  printerState = "OK"
+  jobWarn, jobCrit   = params["job_levels"]
+  pageWarn, pageCrit = params["page_levels"]
+
+  # Determina le statistiche dei job per questa stampante
+  for line in info:
+    if line[0] == "JOB" and line[1] == item:
+      totalJobs  += 1
+      totalPages += saveint(line[4])
+    elif line[0] == "QUEUE" and line[1] == item:
+      printerState = line[2]
+
+  stateNum = rc = 0
+
+  # Settiamo lo stato in base alle pagine
+  if totalPages >= pageCrit:
+    rc = 2
+  elif totalPages >= pageWarn:
+    rc = 1
+
+  # Sovrascriviamo lo stato in base ai jobs (maggiore priorità)
+  if totalJobs >= jobCrit:
+    rc = 2
+  elif totalJobs >= jobWarn:
+    rc = 1
+
+  # Sovrascriviamo lo stato qualora la stampante fosse in Errore o Degradata
+  if(printerState == "Error"):
+    stateNum = rc = 2
+  elif(printerState == "Degraded"):
+    stateNum = rc = 1
+
+  perfdata  = [
+    ( "state", stateNum, 4, 5, 0, 2 ),
+    ( "jobs",  totalJobs, jobWarn, jobCrit ),
+    ( "pages", totalPages, pageWarn, pageCrit )
+  ]
+
+  output = "Printer state: %s, with %d total jobs, %d total pages" % (printerState,totalJobs,totalPages)
+
+  return (rc,output,perfdata)
+
+check_info['windows_print_queues'] = {
+    "check_function"          : check_windows_print_queues,
+    "inventory_function"      : inventory_windows_print_queues,
+    "service_description"     : "Queue %s state",
+    "has_perfdata"            : True,
+    "default_levels_variable" : "windows_print_queues_defaults",
+}
