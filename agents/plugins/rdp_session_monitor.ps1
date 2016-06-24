@@ -3,7 +3,7 @@ function Get-TSSessions {
         $ComputerName = "localhost"
     )
 
-    $header = "Sesion","User","State"
+    $header = "Sesion","User","ID","State"
 
     qwinsta /server:$ComputerName |
     findstr 'rdp-tcp#' |
