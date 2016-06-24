@@ -1,0 +1,77 @@
+#!/usr/bin/python
+# -*- encoding: utf-8; py-indent-offset: 2 -*-
+
+# Example input
+# rdp-tcp#3  PSMConnect-PRD 3  Attivo
+# rdp-tcp#7  PSMConnect-PRD 4  Attivo
+# rdp-tcp#23 PSMConnect-PRD 5  Attivo
+# rdp-tcp#20 PSMConnect-PRD 6  Attivo
+# rdp-tcp#11 PSMConnect-PRD 7  Attivo
+# rdp-tcp#26 PSMConnect-PRD 10 Attivo
+# rdp-tcp#10 PSMConnect-PRD 11 Attivo
+
+# Possible session states
+
+# Active:       The session is connected, and a user is logged on to the RD Session Host server.
+# Connected:    The session is connected, but there is no user logged on to the RD Session Host server.
+# ConnectQuery: The session is in the process of connecting. If this state continues, it indicates a problem with the connection.
+# Shadow:       The session is in the process of being remotely controlled by another session.
+# Listen:       The session is ready to accept a client connection.
+# Disconnected: The user is disconnected from the session, but the session is still attached to the RD Session Host server and can be reconnected to at any time.
+# Reset:        The session is in the process of being reset.
+# Idle:         The session is initialized and ready to accept a connection. To optimize the performance of a server, two default (idle) sessions are initialized before any client connections are made.
+# Down:         The session failed to initialize correctly or could not be terminated, and is not available. If this state continues, it indicates a problem with the connection of the session.
+# Init:         The session is in the process of initializing.
+
+session_states_count = { 
+  "Active":       0,
+  "Connected":    0,
+  "ConnectQuery": 0,
+  "Shadow":       0,
+  "Listen":       0,
+  "Disconnected": 0,
+  "Reset":        0,
+  "Idle":         0,
+  "Down":         0,
+  "Init":         0
+}
+
+factory_settings['windows_rdp_sessions_defaults'] = {
+  "session_levels": (2000,3000),
+}
+
+def inventory_windows_rdp_sessions(info):
+  return [ (None,{}) ]
+
+def check_windows_rdp_sessions(item,params,info):
+  session_levels = params['session_levels']
+  rc = 0
+
+  for line in info:
+    if line[3] in session_state_count.keys():
+      session_states_count[line[3]] += 1     
+
+  total_sessions = sum([ session_count for session_type, session_count in session_states_count.items() ])
+  output = "Total sessions %d" % total_sessions
+  perfdata = [ ("total_sessions",total_sessions,session_levels['warn'],session_levels['crit']) ]
+ 
+  for session_type, session_count in session_states_count.items():
+    output += " %s %d" % (session_type, session_count)
+    perfdata.append((session_type, session_count, None,None,None,None))
+
+  if total_sessions >= session_levels['warn']:
+    rc = 1
+  elif total_sessions >= session_levels['crit']:
+    rc = 2
+
+  return (rc,output,perfdata)
+
+check_info['windows_rdp_sessions'] = {
+    "check_function"          : check_windows_rdp_sessions,
+    "inventory_function"      : inventory_windows_rdp_sessions,
+    "service_description"     : "RDP Sessions",
+    "has_perfdata"            : True,
+    "default_levels_variable" : "windows_rdp_sessions_defaults",
+}
+
+# vim: expandtab:sw=2:ts=2
