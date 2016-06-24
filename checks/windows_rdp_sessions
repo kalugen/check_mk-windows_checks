@@ -53,7 +53,7 @@ def check_windows_rdp_sessions(item,params,info):
     if len(line) < 4:
       continue 
 
-    if line[3] in session_state_count.keys():
+    if line[3] in session_states_count.keys():
       session_states_count[line[3]] += 1     
 
   total_sessions = sum([ session_count for session_type, session_count in session_states_count.items() ])
