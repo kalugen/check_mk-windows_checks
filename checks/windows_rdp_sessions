@@ -46,7 +46,7 @@ def inventory_windows_rdp_sessions(info):
   return [ (None,{}) ]
 
 def check_windows_rdp_sessions(item,params,info):
-  session_levels = params['session_levels']
+  (warn,crit) = params['session_levels']
   rc = 0
 
   for line in info:
@@ -58,15 +58,15 @@ def check_windows_rdp_sessions(item,params,info):
 
   total_sessions = sum([ session_count for session_type, session_count in session_states_count.items() ])
   output = "Total sessions %d" % total_sessions
-  perfdata = [ ("total_sessions",total_sessions,session_levels['warn'],session_levels['crit']) ]
+  perfdata = [ ("total_sessions",total_sessions,warn,crit) ]
  
   for session_type, session_count in session_states_count.items():
     output += " %s %d" % (session_type, session_count)
     perfdata.append((session_type, session_count, None,None,None,None))
 
-  if total_sessions >= session_levels['warn']:
+  if total_sessions >= warn:
     rc = 1
-  elif total_sessions >= session_levels['crit']:
+  elif total_sessions >= crit:
     rc = 2
 
   return (rc,output,perfdata)
