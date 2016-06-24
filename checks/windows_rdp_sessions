@@ -2,6 +2,7 @@
 # -*- encoding: utf-8; py-indent-offset: 2 -*-
 
 # Example input
+#
 # rdp-tcp#3  PSMConnect-PRD 3  Attivo
 # rdp-tcp#7  PSMConnect-PRD 4  Attivo
 # rdp-tcp#23 PSMConnect-PRD 5  Attivo
@@ -9,6 +10,7 @@
 # rdp-tcp#11 PSMConnect-PRD 7  Attivo
 # rdp-tcp#26 PSMConnect-PRD 10 Attivo
 # rdp-tcp#10 PSMConnect-PRD 11 Attivo
+#
 
 # Possible session states
 
@@ -48,6 +50,9 @@ def check_windows_rdp_sessions(item,params,info):
   rc = 0
 
   for line in info:
+    if len(line) == 0:
+      continue 
+
     if line[3] in session_state_count.keys():
       session_states_count[line[3]] += 1     
 
