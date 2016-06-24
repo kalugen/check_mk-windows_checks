@@ -50,7 +50,7 @@ def check_windows_rdp_sessions(item,params,info):
   rc = 0
 
   for line in info:
-    if len(line) == 0:
+    if len(line) < 4:
       continue 
 
     if line[3] in session_state_count.keys():
