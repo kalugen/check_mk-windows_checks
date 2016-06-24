@@ -6,7 +6,7 @@ register_check_parameters(
         elements = [
             ("session_levels",
                 Tuple(
-                    title = _("Maximum number of sessions")
+                    title = _("Maximum number of sessions"),
                     label = _("Maximum number of sessions"),
                     elements = [
                         Integer(title = _("Warning at"),  maxvalue = None),
