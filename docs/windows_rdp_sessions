@@ -1,0 +1,18 @@
+title: Count of windows RDP Sessions
+agents: windows
+catalog: os/kernel
+license: Proprietary
+distribution: MIS Monitoring Desk
+description:
+  This check uses qwinsta.exe to determine the numer of RDP session on a machine. 
+  It checks the total number of sessions, but reports as perfdata the counters by
+  session state (https://technet.microsoft.com/en-us/library/cc754930%28v=ws.11%29.aspx#BKMK_SST)
+
+item:
+ None
+
+perfdata:
+  total sessions counter and the same split by session state
+
+inventory:
+ This check supports inventory.
