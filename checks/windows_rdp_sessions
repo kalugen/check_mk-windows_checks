@@ -74,7 +74,7 @@ def check_windows_rdp_sessions(item,params,info):
 check_info['windows_rdp_sessions'] = {
     "check_function"          : check_windows_rdp_sessions,
     "inventory_function"      : inventory_windows_rdp_sessions,
-    "group"                   : "windows_rdp_sessions"
+    "group"                   : "windows_rdp_sessions",
     "service_description"     : "RDP Sessions",
     "has_perfdata"            : True,
     "default_levels_variable" : "windows_rdp_sessions_defaults",
